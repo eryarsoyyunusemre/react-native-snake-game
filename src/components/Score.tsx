@@ -1,5 +1,5 @@
 import { Text, StyleSheet } from "react-native";
-import {Colors} from "../style/colors";
+import {Colors} from "../styles/colors";
 
 
 interface ScoreProps {

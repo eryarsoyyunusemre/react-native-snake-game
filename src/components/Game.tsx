@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import { PanGestureHandler } from "react-native-gesture-handler";
+import { Colors } from "../styles/colors";
 import { Direction, Coordinate, GestureEventType } from "../types/types";
+import { checkEatsFood } from "../utils/checkEatsFood";
 import { checkGameOver } from "../utils/checkGameOver";
+import { randomFoodPosition } from "../utils/randomFoodPosition";
 import Food from "./Food";
 import Header from "./Header";
 import Score from "./Score";
 import Snake from "./Snake";
-import {Colors} from "../style/colors";
-import {checkEatsFood} from "../utils/checkEatFood";
-import {randomFoodPosition} from "../utils/RandomFoodPosition";
+
 
 const SNAKE_INITIAL_POSITION = [{ x: 5, y: 5 }];
 const FOOD_INITIAL_POSITION = { x: 5, y: 20 };
@@ -17,7 +18,7 @@ const GAME_BOUNDS = { xMin: 0, xMax: 35, yMin: 0, yMax: 63 };
 const MOVE_INTERVAL = 50;
 const SCORE_INCREMENT = 10;
 
-export default function Game() {
+export default function Game(): JSX.Element {
     const [direction, setDirection] = useState<Direction>(Direction.Right);
     const [snake, setSnake] = useState<Coordinate[]>(SNAKE_INITIAL_POSITION);
     const [food, setFood] = useState<Coordinate>(FOOD_INITIAL_POSITION);
@@ -26,14 +27,13 @@ export default function Game() {
     const [isPaused, setIsPaused] = useState<boolean>(false);
 
     useEffect(() => {
-        if (!isGameOver && !isPaused) { // İkisi de false olduğunda hareket etmesi gerekiyor
+        if (!isGameOver) {
             const intervalId = setInterval(() => {
-                moveSnake();
+                !isPaused && moveSnake();
             }, MOVE_INTERVAL);
             return () => clearInterval(intervalId);
         }
     }, [snake, isGameOver, isPaused]);
-
 
     const moveSnake = () => {
         const snakeHead = snake[0];
@@ -62,15 +62,13 @@ export default function Game() {
                 break;
         }
 
-        // moveSnake işlevi içinde
         if (checkEatsFood(newHead, food, 2)) {
             setFood(randomFoodPosition(GAME_BOUNDS.xMax, GAME_BOUNDS.yMax));
-            setSnake([newHead, ...snake]); // Yılanın yeni konumunu güncelle
+            setSnake([newHead, ...snake]);
             setScore(score + SCORE_INCREMENT);
         } else {
-            setSnake([newHead, ...snake.slice(0, -1)]); // Yılanın son halkasını kaldırarak yeni baş kısmını ekle
+            setSnake([newHead, ...snake.slice(0, -1)]);
         }
-
     };
 
     const handleGesture = (event: GestureEventType) => {

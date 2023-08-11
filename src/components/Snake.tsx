@@ -1,7 +1,7 @@
 import {Coordinate} from "../types/types";
 import {Fragment} from "react";
 import {View,StyleSheet} from "react-native";
-import {Colors} from "../style/colors";
+import {Colors} from "../styles/colors";
 
 interface SnakeProps{
     snake:Coordinate[];
